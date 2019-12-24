@@ -21,47 +21,16 @@ namespace AdventOfCode2019
 //            
             var day3 = new Day3();
 
-            
-//            var result1 = day3.GetLogFromMultipleInstructions(new CoOrdinates{X = 0,Y = 0}, instructions);
-//            var result2 = day3.GetLogFromMultipleInstructions(new CoOrdinates{X = 0,Y = 0}, instructions2);
+
             var result1 = day3.GetLogFromMultipleInstructionsAsDictionary(new CoOrdinates{X = 0,Y = 0}, instructions);
             var result2 = day3.GetLogFromMultipleInstructionsAsDictionary(new CoOrdinates{X = 0,Y = 0}, instructions2);
-            
-//            Working Giulio Code
-//            var result1 = day3.GetLogFromMultipleInstructionsAsString(new CoOrdinates{X = 0,Y = 0}, instructions).GroupBy(x => x).ToDictionary(x => x.Key, x => x.Count());
-//            var result2 = day3.GetLogFromMultipleInstructionsAsString(new CoOrdinates{X = 0,Y = 0}, instructions2).GroupBy(x => x).ToDictionary(x => x.Key, x => x.Count());
-//            
-//
-//            int minimum = Int32.MaxValue;
-//            
-//            foreach (KeyValuePair<string, int> point in result1)
-//            {
-//                if (result2.Contains(point)/* || point.Value > 1*/)
-//                {
-//                    string[] split = point.Key.Split(',');
-//
-//                    var val1 = Math.Abs(Int32.Parse(split[0])) + Math.Abs(Int32.Parse(split[1]));
-//                    
-//                    if (val1 != 0)
-//                        minimum = Math.Min(val1, minimum);
-//                }
-//            }
-//          
-//            Console.WriteLine(minimum);
-            
-//           var matches = result1.Except(result2);
-//            var intersections = result1.Except(result2);
-//
-//            var intersections = new List<CoOrdinates>();
-//            foreach (var log in result1)
-//            {
-//                intersections.AddRange(result2.Where(l => l.X == log.X).Where(l=> l.Y == log.Y));
-//
-//            }
+  
             var intersections = result1.Union(result2).Where(x=>Math.Abs(x.Value)>1).OrderByDescending(x=>x.Value);
-            var shortestDistance = intersections.Select(x => x.Key.Split(',').Select(s=>Math.Abs(Int32.Parse(s))).Sum());
-           // var shortestDistance = matches.Select(i => Math.Abs(i.X) + Math.Abs(i.Y)).OrderBy(i=>i).First();
-            Console.WriteLine(shortestDistance.OrderBy(i=>Math.Abs(i)).First());
+            var shortestDistance = intersections
+                .Select(x => x.Key.Split(',')
+                .Select(s=>Math.Abs(Int32.Parse(s))).Sum())
+                .OrderBy(i=>Math.Abs(i)).First();
+            Console.WriteLine(shortestDistance);
 
             
 
