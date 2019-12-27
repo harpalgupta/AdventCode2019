@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 
 namespace AdventOfCode2019
@@ -8,7 +9,6 @@ namespace AdventOfCode2019
     {
         public IEnumerable<CoOrdinates> GetLogFromInstruction(CoOrdinates startingPoint, string instruction)
         {
-            //R8
             var convertedInstruction = TransformInstructionToDistance(instruction);
             var coOrdinatesLog = new List<CoOrdinates>();
             var currentPosition = startingPoint;
@@ -41,24 +41,13 @@ namespace AdventOfCode2019
             }
             return coOrdinatesLog;
         }
-
-        public IEnumerable<CoOrdinates> GetLogFromMultipleInstructions(CoOrdinates centralPort, string[] instructions)
+        
+        public IEnumerable<string> GetLogFromMultipleInstructionsAsString(CoOrdinates centralPort, string stringOfInstructions)
         {
-            var start = new CoOrdinates() {X = centralPort.X, Y = centralPort.Y};
-            var log = new List<CoOrdinates>();
-            foreach (var instruction in instructions)
-            {
-                var result = GetLogFromInstruction(start, instruction);
-                log.AddRange(result);
-                start.X = log.Last().X;
-                start.Y = log.Last().Y;
-            }
-
-            return log;
-        }
-
-        public IEnumerable<string> GetLogFromMultipleInstructionsAsString(CoOrdinates centralPort, string[] instructions)
-        {
+            char[] delimiterChars = { ',' };
+            var instructions = stringOfInstructions.Split(delimiterChars);
+          
+            
             var start = new CoOrdinates() {X = centralPort.X, Y = centralPort.Y};
             var log = new List<string>();
             foreach (var instruction in instructions)
@@ -73,37 +62,10 @@ namespace AdventOfCode2019
         }
         
         
-        public Dictionary<string,int> GetLogFromMultipleInstructionsAsDictionary(CoOrdinates centralPort, string[] instructions)
+        public Dictionary<string,int> GetLogFromMultipleInstructionsAsDictionary(CoOrdinates centralPort, string instructions)
         {
-            var start = new CoOrdinates() {X = centralPort.X, Y = centralPort.Y};
-            var log = new Dictionary<string,int>();
-            foreach (var instruction in instructions)
-            {
-                IEnumerable<CoOrdinates> result = GetLogFromInstruction(start, instruction).ToList();
-
-             
-
-                foreach (var coord in result)
-                {
-                    var key = $"{coord.X},{coord.Y}";
-
-                    if (log.ContainsKey(key))
-                    {
-                        log[key]++;
-                    }
-                    else
-                    {
-                        log[key] = 1;
-                    }
-                    
-                    
-                }
-    
-                start.X = result.Last().X;
-                start.Y = result.Last().Y;
-            }
-
-            return log;
+            var stringResult = GetLogFromMultipleInstructionsAsString(centralPort, instructions); 
+            return stringResult.GroupBy(x => x).ToDictionary(x => x.Key, x => x.Count());
         }
 
         public CoOrdinates TransformInstructionToDistance(string instruction)
@@ -130,7 +92,113 @@ namespace AdventOfCode2019
 
             return result;
         }
+
+        public Dictionary<string, int> GetIntersections(Dictionary<string, int> result1,Dictionary<string, int>result2)
+        {
+            Dictionary<string, int> result = new Dictionary<string, int>();
+            foreach (KeyValuePair<string, int> point in result1)
+            {
+                if (result2.Contains(point) /* || point.Value > 1*/)
+                {
+                    if (point.Key != "0,0")
+                    {
+                        result.Add(point.Key, point.Value);
+                    }
+
+                }
+            }
+            return result;
+
+        }
+       
+        public int ShortestDistance(Dictionary<string, int> intersections)
+        {
+            var distances = intersections
+                .Select(x => x.Key.Split(',')
+                    .Select(s => Math.Abs(Int32.Parse(s))).Sum())
+                .OrderBy(i => i);
+            
+            return distances.First();
+        }
+        
+        //check what step in Log intersections occur
+
+        public IEnumerable<int> GetLowestStepsForIntersections(CoOrdinates centralPort,string instructions, IEnumerable<string>intersections)
+        {
+            
+            var log = GetLogFromMultipleInstructionsAsString(centralPort, instructions);
+            var steps = intersections.Select(i=>GetStepsForIntersection(centralPort,instructions, i, log));
+            return steps.Select(s => GetDistanceForAllSteps(s));
+        }
+
+        public IEnumerable<string> GetStepsForIntersection(CoOrdinates centralPort, string instructions,string interSection, IEnumerable<string> log)
+        {
+            var positionOfIntersection = GetPositionOfIntersection(centralPort, instructions, interSection);
+
+            var filteredLog = log.ToArray().Take(positionOfIntersection);
+
+            return filteredLog;
+
+        }
+
+        public int GetDistanceForAllSteps(IEnumerable<string> log)
+        {
+            var previousX = 0;
+            var previousY = 0;
+            var total = 0;
+            
+
+                var xValues = log.Select(i=>Int32.Parse(i.Split(',').First()));
+                var yValues = log.Select(i=>Int32.Parse(i.Split(',').ElementAt(1)));
+
+                foreach (var value in xValues)
+                {
+                    if (value != previousX)
+                    {
+                        var difference = Math.Abs(previousX - value);
+                        total += Math.Abs(difference);
+                        previousX = value;
+
+                    }
+                }
+                
+                foreach (var value in yValues)
+                {
+                    if (value != previousY)
+                    {
+                        var difference = Math.Abs(previousY - value);
+                        total += Math.Abs(difference);
+                        previousY = value;
+
+
+                    }
+                }
+
+                return total;
+
+
+        }
+
+        public  int GetPositionOfIntersection(CoOrdinates centralPort,string instructions,string interSection)
+        {
+            var log = GetLogFromMultipleInstructionsAsString(centralPort, instructions).ToArray();
+            return Array.IndexOf(log, interSection);
+        }
+
+        private static int GetStepsOfIntersection(string[] log,int positionOfIntersection)
+        {
+            var totalDistance = 0;
+
+            for (var i = 0; i < positionOfIntersection; i++)
+            {
+                totalDistance += log[i].Split(',').Select(s => Math.Abs(Int32.Parse(s))).Sum();
+            }
+
+            return totalDistance;
+        }
     }
+    
+    
 
     public class CoOrdinates
     {
