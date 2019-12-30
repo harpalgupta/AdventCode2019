@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
@@ -60,42 +61,56 @@ namespace AdventOfCode2019
         [Test]
         public void CheckStepsForIntersections()
         {
+            var test1 = "R8,U5,L5,D3";
+            var test2 = "U7,R6,D4,L4";
+            
             var day3 = new Day3();
             
             var log1 = day3.GetLogFromMultipleInstructionsAsDictionary(centralPort, instructions);
             var log2 = day3.GetLogFromMultipleInstructionsAsDictionary(centralPort, instructions2); 
+            var log3 = day3.GetLogFromMultipleInstructionsAsDictionary(centralPort, instructions3); 
+            var log4 = day3.GetLogFromMultipleInstructionsAsDictionary(centralPort, instructions4); 
+            var log5 = day3.GetLogFromMultipleInstructionsAsDictionary(centralPort, instructions5); 
+            var log6 = day3.GetLogFromMultipleInstructionsAsDictionary(centralPort, instructions6); 
 //            
-//            var log3 = day3.GetLogFromMultipleInstructionsAsDictionary(centralPort, instructions3);
-//            var log4 = day3.GetLogFromMultipleInstructionsAsDictionary(centralPort, instructions4);
-//            
-//            var log5 = day3.GetLogFromMultipleInstructionsAsDictionary(centralPort, instructions5);
-//            var log6 = day3.GetLogFromMultipleInstructionsAsDictionary(centralPort, instructions6);
+            var logtest1 = day3.GetLogFromMultipleInstructionsAsDictionary(centralPort, test1); 
+            var logtest2 = day3.GetLogFromMultipleInstructionsAsDictionary(centralPort, test2); 
             
             
             var intersections = day3.GetIntersections(log1, log2);
-//            var intersections34= day3.GetIntersections(log3, log4);
-//            var intersections56= day3.GetIntersections(log5, log6);
+            var intersections34 = day3.GetIntersections(log3, log4);
+            var intersectionsTest = day3.GetIntersections(logtest1, logtest2);
+            var intersections56 = day3.GetIntersections(log5, log6);
 
-            var results1 = day3.GetLowestStepsForIntersections(centralPort, instructions, intersections.Keys);
-            var results2 = day3.GetLowestStepsForIntersections(centralPort, instructions2, intersections.Keys);
-//            var steps2 = day3.GetStepsForIntersection(centralPort, instructions2, intersections.Keys);
-//            
-//            var steps3 = day3.GetStepsForIntersection(centralPort, instructions3, intersections34.Keys);
-//            var steps4 = day3.GetStepsForIntersection(centralPort, instructions4, intersections34.Keys);
-//            var steps5 = day3.GetStepsForIntersection(centralPort, instructions5, intersections56.Keys);
-//            var steps6 = day3.GetStepsForIntersection(centralPort, instructions6, intersections56.Keys);
+            var positionsOfIntersectionsinLog1 = intersections.Select(i=>day3.GetPositionOfIntersection(log1.Keys, i.Key));
+            var positionsOfIntersectionsinLog2 = intersections.Select(i=>day3.GetPositionOfIntersection(log2.Keys, i.Key));
+            
+            var results1 = day3.GetStepsForIntersections( log1.Keys, intersections.Keys);
+            var results2 = day3.GetStepsForIntersections( log2.Keys, intersections.Keys);
+            var results3 = day3.GetStepsForIntersections( log3.Keys, intersections34.Keys);
+            var results4 = day3.GetStepsForIntersections( log4.Keys, intersections34.Keys);
+            var results5 = day3.GetStepsForIntersections( log5.Keys, intersections56.Keys);
+            var results6 = day3.GetStepsForIntersections( log6.Keys, intersections56.Keys);
 
-           // var result1 =day3.GetDistanceForAllSteps(steps1)+day3.GetDistanceForAllSteps(steps2);
-//            var result2 =day3.GetDistanceForAllSteps(steps3)+day3.GetDistanceForAllSteps(steps4);
-//            var result3 =day3.GetDistanceForAllSteps(steps5)+day3.GetDistanceForAllSteps(steps6);
-//            
+            var testresult1 = day3.GetStepsForIntersections( logtest1.Keys, intersectionsTest.Keys);
+            var testresult2 = day3.GetStepsForIntersections( logtest2.Keys, intersectionsTest.Keys);
+//            var positionsOfIntersections = day3.GetPositionOfIntersection(centralPort, log1.Keys, intersections.Keys.First());
 
-            Assert.AreEqual(30,results2);
-//            Assert.AreEqual(610,result2);
-//            Assert.AreEqual(410,result3);
+            var totalledSteps = day3.GetLowestTotalledSteps(testresult1, testresult2);
+
+
+            Assert.AreEqual(30,totalledSteps);
+//            Assert.AreEqual(30,positionsOfIntersections);
+        //    Assert.AreEqual(30,results2+results1);
+           Assert.AreEqual(610,day3.GetLowestTotalledSteps(results1,results2));
+           Assert.AreEqual(410,day3.GetLowestTotalledSteps(results3,results4));
+           Assert.AreEqual(410,day3.GetLowestTotalledSteps(results5,results6));
+           
+           
 
 
         }
-      
+
+
     }
 }

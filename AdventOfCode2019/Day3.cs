@@ -123,22 +123,34 @@ namespace AdventOfCode2019
         
         //check what step in Log intersections occur
 
-        public IEnumerable<int> GetLowestStepsForIntersections(CoOrdinates centralPort,string instructions, IEnumerable<string>intersections)
+        public IEnumerable<int> GetStepsForIntersections(IEnumerable<string> log, IEnumerable<string>intersections)
         {
             
-            var log = GetLogFromMultipleInstructionsAsString(centralPort, instructions);
-            var steps = intersections.Select(i=>GetStepsForIntersection(centralPort,instructions, i, log));
+            var steps = intersections.Select(i=>GetStepsForIntersection(i, log));
             return steps.Select(s => GetDistanceForAllSteps(s));
         }
 
-        public IEnumerable<string> GetStepsForIntersection(CoOrdinates centralPort, string instructions,string interSection, IEnumerable<string> log)
+        public IEnumerable<string> GetStepsForIntersection(string interSection, IEnumerable<string> log)
         {
-            var positionOfIntersection = GetPositionOfIntersection(centralPort, instructions, interSection);
+            var positionOfIntersection = GetPositionOfIntersection(log, interSection);
 
-            var filteredLog = log.ToArray().Take(positionOfIntersection);
+            var filteredLog = log.ToArray().Take(positionOfIntersection+1);
 
             return filteredLog;
 
+        }
+        
+        public int GetLowestTotalledSteps(IEnumerable<int> stepsA, IEnumerable<int> stepsB)
+        {
+            var totalledSteps = new List<int>();
+            var intersectionsCount = stepsA.Count();
+
+            for (int i = 0; i < intersectionsCount; i++)
+            {
+                totalledSteps.Add(stepsA.ElementAt(i) + stepsB.ElementAt(i));
+            }
+
+            return totalledSteps.Min();
         }
 
         public int GetDistanceForAllSteps(IEnumerable<string> log)
@@ -156,7 +168,7 @@ namespace AdventOfCode2019
                     if (value != previousX)
                     {
                         var difference = Math.Abs(previousX - value);
-                        total += Math.Abs(difference);
+                        total++;
                         previousX = value;
 
                     }
@@ -167,7 +179,7 @@ namespace AdventOfCode2019
                     if (value != previousY)
                     {
                         var difference = Math.Abs(previousY - value);
-                        total += Math.Abs(difference);
+                        total++;
                         previousY = value;
 
 
@@ -179,23 +191,11 @@ namespace AdventOfCode2019
 
         }
 
-        public  int GetPositionOfIntersection(CoOrdinates centralPort,string instructions,string interSection)
+        public  int GetPositionOfIntersection(IEnumerable<string> log,string interSection)
         {
-            var log = GetLogFromMultipleInstructionsAsString(centralPort, instructions).ToArray();
-            return Array.IndexOf(log, interSection);
+            return Array.IndexOf(log.ToArray(), interSection);
         }
-
-        private static int GetStepsOfIntersection(string[] log,int positionOfIntersection)
-        {
-            var totalDistance = 0;
-
-            for (var i = 0; i < positionOfIntersection; i++)
-            {
-                totalDistance += log[i].Split(',').Select(s => Math.Abs(Int32.Parse(s))).Sum();
-            }
-
-            return totalDistance;
-        }
+        
     }
     
     
