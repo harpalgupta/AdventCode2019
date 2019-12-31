@@ -47,6 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Day2_1202ProgramAlarm.cs" />
+    <Compile Include="Day2Tests.cs" />
     <Compile Include="Day3.cs" />
     <Compile Include="Day3Tests.cs" />
     <Compile Include="Day4.cs" />
@@ -58,7 +60,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include=".gitignore" />
+    <Content Include="..\.gitignore">
+      <Link>.gitignore</Link>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

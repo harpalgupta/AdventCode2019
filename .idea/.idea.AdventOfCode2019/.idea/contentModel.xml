@@ -2,10 +2,12 @@
 <project version="4">
   <component name="ContentModelStore">
     <e p="C:\Repos\Personal\Advent\AdventOfCode2019" t="IncludeFlat">
+      <e p=".gitignore" t="Include" />
       <e p="AdventOfCode2019" t="IncludeRecursive">
-        <e p=".gitignore" t="Include" />
         <e p="AdventOfCode2019.csproj" t="IncludeRecursive" />
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Day2_1202ProgramAlarm.cs" t="Include" />
+        <e p="DAy2Tests.cs" t="Include" />
         <e p="Day3.cs" t="Include" />
         <e p="Day3Tests.cs" t="Include" />
         <e p="Day4.cs" t="Include" />
