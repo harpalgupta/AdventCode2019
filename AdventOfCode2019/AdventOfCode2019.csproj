@@ -48,7 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Day2_1202ProgramAlarm.cs" />
-    <Compile Include="Day2Tests.cs" />
+    <Compile Include="Day2_1202ProgramAlarmTests.cs" />
     <Compile Include="Day3.cs" />
     <Compile Include="Day3Tests.cs" />
     <Compile Include="Day4.cs" />
