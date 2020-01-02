@@ -12,7 +12,7 @@ namespace AdventOfCode2019
         private static int _outputValue;
         private static ProcessMode[] _paramModes;
 
-        public int[] ProcessInstructions(int[] instructions,int idValue=1)
+        public int[] ProcessInstructions(int[] instructions, int idValue = 1)
         {
             _inputIdValue = idValue;
             _outputValue = 0;
@@ -81,17 +81,16 @@ namespace AdventOfCode2019
                     var paramCodeArray = paramCodeString.ToArray();
 
                     var opCode = ParamCode;
-                    if (paramCodeString.Length > 2)
-                    {
-                        _paramModes = new ProcessMode[3];
 
-                        var lastTwoFromParamCode = paramCodeArray[3].ToString() + paramCodeArray[4].ToString();
-                        _paramModes[0] = GetProcessModeForParam(paramCodeArray[2]);
-                        _paramModes[1] = GetProcessModeForParam(paramCodeArray[1]);
-                        _paramModes[2] = GetProcessModeForParam(paramCodeArray[0]);
+                    _paramModes = new ProcessMode[3];
 
-                        opCode = Int32.Parse(lastTwoFromParamCode);
-                    }
+                    var lastTwoFromParamCode = paramCodeArray[3].ToString() + paramCodeArray[4].ToString();
+                    _paramModes[0] = GetProcessModeForParam(paramCodeArray[2]);
+                    _paramModes[1] = GetProcessModeForParam(paramCodeArray[1]);
+                    _paramModes[2] = GetProcessModeForParam(paramCodeArray[0]);
+
+                    opCode = Int32.Parse(lastTwoFromParamCode);
+
 
                     if (_operations.ContainsKey(opCode))
                     {
@@ -99,8 +98,10 @@ namespace AdventOfCode2019
                     }
                     else
                     {
-                     //TODO Skip if Opcode not valid?
-                     //MovePointer(1);
+                        //TODO Skip if Opcode not valid?
+                        //MovePointer(1);
+                        throw new Exception($"{opCode} OpCode Not Found");
+
                     }
                 }
             }
@@ -188,7 +189,7 @@ namespace AdventOfCode2019
             {
                 State[Param(3)] = State[Param(1)] < State[Param(2)] ? 1 : 0;
                 MovePointer(4);
-            }   
+            }
             private void EqualToCheck()
             {
                 State[Param(3)] = State[Param(1)] == State[Param(2)] ? 1 : 0;
