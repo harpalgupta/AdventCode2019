@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -8,10 +8,15 @@ namespace AdventOfCode2019
     public class Day2_1202ProgramAlarm
     {
         private readonly ProgramAlarm _programAlarm = new ProgramAlarm();
-        
+        private static int _inputValue;
+        private static int _outputValue;
+        private static ProcessMode[] _paramModes;
+
         public int[] ProcessInstructions(int[] instructions)
         {
-            _programAlarm.Process(instructions);
+            _inputValue = 1;
+            _outputValue = 0;
+            _programAlarm.Process(instructions,_inputValue);
 
             return _programAlarm.State;
         }
@@ -24,6 +29,10 @@ namespace AdventOfCode2019
             instructions[2] = verb;
 
             return ProcessInstructions(instructions);
+        }
+        public int GetOutputValue()
+        {
+            return _outputValue;
         }
 
         public int LoopNounVerbProcessUntilMatchedReturningResult(int[] instructions, int matchValue)
@@ -53,22 +62,30 @@ namespace AdventOfCode2019
             private Dictionary<int, Action> _operations;
             private bool _isProcessing;
 
-            private int OpCode => State[_pointer];
+           // private int OpCode => State[_pointer];
+            private int ParamCode => State[_pointer];
 
             public ProgramAlarm()
             {
                 BuildOperations();
             }
 
-            public void Process(int[] instructions)
+            public void Process(int[] instructions, int? input)
             {
                 State = instructions.ToArray();
 
                 for (_pointer = 0, _isProcessing = true; _isProcessing;)
                 {
-                    if (_operations.ContainsKey(OpCode))
+                    var paramCodeString = ParamCode.ToString();
+                    var opCode = ParamCode;
+                    if (ParamCode.ToString().Length > 1)
                     {
-                        _operations[OpCode]();
+                        opCode = Int32.Parse(paramCodeString.Substring(paramCodeString.Length-2));
+                    }
+                    
+                    if (_operations.ContainsKey(opCode))
+                    {
+                        _operations[opCode]();
                     }
                 }
             }
@@ -84,6 +101,24 @@ namespace AdventOfCode2019
                 State[Param(3)] = State[Param(1)] * State[Param(2)];
                 MovePointer(4);
             }
+            private void Store()
+            {
+                var state = State.ToArray();
+                if (Param(1) >= state.Length)
+                {
+                    Array.Resize(ref state,Param(1)+1);
+                }
+                state[Param(1)] = _inputValue;
+                State = state;
+                MovePointer(2);
+            }
+            private void Output()
+            {
+                _outputValue = State[Param(1)];
+                MovePointer(2);
+            }
+
+         
 
             private void Stop()
             {
@@ -102,10 +137,12 @@ namespace AdventOfCode2019
 
             private void BuildOperations()
             {
-                _operations = new Dictionary<int, Action>
+                _operations = new Dictionary<int,Action>
                 {
                     { 1, Sum },
                     { 2, Product },
+                    { 3, Store},
+                    { 4, Output},
                     { 99, Stop }
                 };
             }

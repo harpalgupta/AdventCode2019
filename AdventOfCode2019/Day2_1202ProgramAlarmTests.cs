@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace AdventOfCode2019
 {
     [TestFixture]
-    public class Day2Tests
+    public class Day2_1202ProgramAlarmTests
     {
         private Day2_1202ProgramAlarm _program;
 
@@ -111,6 +111,36 @@ namespace AdventOfCode2019
             var result = _program.LoopNounVerbProcessUntilMatchedReturningResult(instructions, 19690720);
 
             Assert.AreEqual(4259, result);
+        }  
+        
+        [Test]
+        public void OpCode3TakesInputAt0AndStoresValueAtPosition5()
+        {
+            int[] instructions = {3,5,99};
+            var result = _program.ProcessInstructions(instructions);
+
+            Assert.AreEqual(new []{3,5,99,0,0,1}, result);
+        }
+        
+                
+        [Test]
+        public void OpCode4OutPutsValueAtPosition2()
+        {
+            int[] instructions = {4,2,99};
+            var result = _program.ProcessInstructions(instructions);
+
+            Assert.AreEqual(_program.GetOutputValue(), 99);
+        }
+
+        [Test]
+        public void CanHandleParameterModeForSumIn_AllParamsInPositionMode()
+        {
+            int[] instructions = {0001, 0, 0, 0, 99};
+            var result = _program.ProcessInstructions(instructions);
+
+            Assert.AreEqual(new[] {2, 0, 0, 0, 99}, _program.ProcessInstructions(instructions));
+            
+            
         }
     }
 }
