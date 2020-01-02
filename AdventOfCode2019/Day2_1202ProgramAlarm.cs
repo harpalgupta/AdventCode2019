@@ -8,15 +8,15 @@ namespace AdventOfCode2019
     public class Day2_1202ProgramAlarm
     {
         private readonly ProgramAlarm _programAlarm = new ProgramAlarm();
-        private static int _inputValue;
+        private static int _inputIdValue;
         private static int _outputValue;
         private static ProcessMode[] _paramModes;
 
-        public int[] ProcessInstructions(int[] instructions)
+        public int[] ProcessInstructions(int[] instructions,int idValue=1)
         {
-            _inputValue = 1;
+            _inputIdValue = idValue;
             _outputValue = 0;
-            _programAlarm.Process(instructions, _inputValue);
+            _programAlarm.Process(instructions, _inputIdValue);
 
             return _programAlarm.State;
         }
@@ -97,6 +97,11 @@ namespace AdventOfCode2019
                     {
                         _operations[opCode]();
                     }
+                    else
+                    {
+                     //TODO Skip if Opcode not valid?
+                     //MovePointer(1);
+                    }
                 }
             }
 
@@ -130,7 +135,7 @@ namespace AdventOfCode2019
                     Array.Resize(ref state, Param(1) + 1);
                 }
 
-                state[Param(1)] = _inputValue;
+                state[Param(1)] = _inputIdValue;
                 State = state;
                 MovePointer(2);
             }
@@ -171,8 +176,46 @@ namespace AdventOfCode2019
                     {2, Product},
                     {3, Store},
                     {4, Output},
+                    {5, JumpIfTrue},
+                    {6, JumpIfFalse},
+                    {7, LessThenCheck},
+                    {8, EqualToCheck},
                     {99, Stop}
                 };
+            }
+
+            private void LessThenCheck()
+            {
+                State[Param(3)] = State[Param(1)] < State[Param(2)] ? 1 : 0;
+                MovePointer(4);
+            }   
+            private void EqualToCheck()
+            {
+                State[Param(3)] = State[Param(1)] == State[Param(2)] ? 1 : 0;
+                MovePointer(4);
+            }
+
+            private void JumpIfTrue()
+            {
+                if (State[Param(1)] != 0)
+                {
+                    MovePointer(2);
+                }
+                else
+                {
+                    MovePointer(4);
+                }
+            }
+            private void JumpIfFalse()
+            {
+                if (State[Param(1)] == 0)
+                {
+                    MovePointer(2);
+                }
+                else
+                {
+                    MovePointer(4);
+                }
             }
         }
     }
