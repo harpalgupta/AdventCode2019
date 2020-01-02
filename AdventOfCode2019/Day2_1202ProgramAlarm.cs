@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -16,20 +16,21 @@ namespace AdventOfCode2019
         {
             _inputValue = 1;
             _outputValue = 0;
-            _programAlarm.Process(instructions,_inputValue);
+            _programAlarm.Process(instructions, _inputValue);
 
             return _programAlarm.State;
         }
-        
+
         public int[] ProcessInstructions(int[] instructions, int noun, int verb)
         {
             instructions = instructions.ToArray();
-            
+
             instructions[1] = noun;
             instructions[2] = verb;
 
             return ProcessInstructions(instructions);
         }
+
         public int GetOutputValue()
         {
             return _outputValue;
@@ -62,7 +63,7 @@ namespace AdventOfCode2019
             private Dictionary<int, Action> _operations;
             private bool _isProcessing;
 
-           // private int OpCode => State[_pointer];
+            // private int OpCode => State[_pointer];
             private int ParamCode => State[_pointer];
 
             public ProgramAlarm()
@@ -76,18 +77,37 @@ namespace AdventOfCode2019
 
                 for (_pointer = 0, _isProcessing = true; _isProcessing;)
                 {
-                    var paramCodeString = ParamCode.ToString();
+                    var paramCodeString = ParamCode.ToString().PadLeft(5, Convert.ToChar("0"));
+                    var paramCodeArray = paramCodeString.ToArray();
+
                     var opCode = ParamCode;
-                    if (ParamCode.ToString().Length > 1)
+                    if (paramCodeString.Length > 2)
                     {
-                        opCode = Int32.Parse(paramCodeString.Substring(paramCodeString.Length-2));
+                        _paramModes = new ProcessMode[3];
+
+                        var lastTwoFromParamCode = paramCodeArray[3].ToString() + paramCodeArray[4].ToString();
+                        _paramModes[0] = GetProcessModeForParam(paramCodeArray[2]);
+                        _paramModes[1] = GetProcessModeForParam(paramCodeArray[1]);
+                        _paramModes[2] = GetProcessModeForParam(paramCodeArray[0]);
+
+                        opCode = Int32.Parse(lastTwoFromParamCode);
                     }
-                    
+
                     if (_operations.ContainsKey(opCode))
                     {
                         _operations[opCode]();
                     }
                 }
+            }
+
+            private static ProcessMode GetProcessModeForParam(char paramCode)
+            {
+                if (Int32.Parse(paramCode.ToString()) == 1)
+                {
+                    return ProcessMode.Immediate;
+                }
+
+                return ProcessMode.Position;
             }
 
             private void Sum()
@@ -101,24 +121,27 @@ namespace AdventOfCode2019
                 State[Param(3)] = State[Param(1)] * State[Param(2)];
                 MovePointer(4);
             }
+
             private void Store()
             {
                 var state = State.ToArray();
                 if (Param(1) >= state.Length)
                 {
-                    Array.Resize(ref state,Param(1)+1);
+                    Array.Resize(ref state, Param(1) + 1);
                 }
+
                 state[Param(1)] = _inputValue;
                 State = state;
                 MovePointer(2);
             }
+
             private void Output()
             {
                 _outputValue = State[Param(1)];
+                Console.WriteLine(_outputValue);
                 MovePointer(2);
             }
 
-         
 
             private void Stop()
             {
@@ -127,6 +150,11 @@ namespace AdventOfCode2019
 
             private int Param(int number)
             {
+                if (_paramModes[number - 1] == ProcessMode.Immediate)
+                {
+                    return _pointer + number;
+                }
+
                 return State[_pointer + number];
             }
 
@@ -137,13 +165,13 @@ namespace AdventOfCode2019
 
             private void BuildOperations()
             {
-                _operations = new Dictionary<int,Action>
+                _operations = new Dictionary<int, Action>
                 {
-                    { 1, Sum },
-                    { 2, Product },
-                    { 3, Store},
-                    { 4, Output},
-                    { 99, Stop }
+                    {1, Sum},
+                    {2, Product},
+                    {3, Store},
+                    {4, Output},
+                    {99, Stop}
                 };
             }
         }
