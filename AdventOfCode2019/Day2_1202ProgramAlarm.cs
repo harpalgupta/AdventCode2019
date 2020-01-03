@@ -16,7 +16,7 @@ namespace AdventOfCode2019
         {
             _inputIdValue = idValue;
             _outputValue = 0;
-            _programAlarm.Process(instructions, _inputIdValue);
+            _programAlarm.Process(instructions);
 
             return _programAlarm.State;
         }
@@ -71,7 +71,7 @@ namespace AdventOfCode2019
                 BuildOperations();
             }
 
-            public void Process(int[] instructions, int? input)
+            public void Process(int[] instructions)
             {
                 State = instructions.ToArray();
 
@@ -80,16 +80,14 @@ namespace AdventOfCode2019
                     var paramCodeString = ParamCode.ToString().PadLeft(5, Convert.ToChar("0"));
                     var paramCodeArray = paramCodeString.ToArray();
 
-                    var opCode = ParamCode;
-
                     _paramModes = new ProcessMode[3];
 
-                    var lastTwoFromParamCode = paramCodeArray[3].ToString() + paramCodeArray[4].ToString();
+                    string lastTwoFromParamCode = paramCodeArray[3] + paramCodeArray[4].ToString();
                     _paramModes[0] = GetProcessModeForParam(paramCodeArray[2]);
                     _paramModes[1] = GetProcessModeForParam(paramCodeArray[1]);
                     _paramModes[2] = GetProcessModeForParam(paramCodeArray[0]);
 
-                    opCode = Int32.Parse(lastTwoFromParamCode);
+                    var opCode = Int32.Parse(lastTwoFromParamCode);
 
 
                     if (_operations.ContainsKey(opCode))
@@ -100,8 +98,7 @@ namespace AdventOfCode2019
                     {
                         //TODO Skip if Opcode not valid?
                         //MovePointer(1);
-                        throw new Exception($"{opCode} OpCode Not Found");
-
+                        //throw new Exception($"{opCode} OpCode Not Found");
                     }
                 }
             }
@@ -148,7 +145,6 @@ namespace AdventOfCode2019
                 MovePointer(2);
             }
 
-
             private void Stop()
             {
                 _isProcessing = false;
@@ -168,6 +164,41 @@ namespace AdventOfCode2019
             {
                 _pointer += positions;
             }
+            private void LessThenCheck()
+            {
+                State[Param(3)] = State[Param(1)] < State[Param(2)] ? 1 : 0;
+                MovePointer(4);
+            }
+
+            private void EqualToCheck()
+            {
+                State[Param(3)] = State[Param(1)] == State[Param(2)] ? 1 : 0;
+                MovePointer(4);
+            }
+
+            private void JumpIfTrue()
+            {
+                if (State[Param(1)] != 0)
+                {
+                    _pointer = State[Param(2)];
+                }
+                else
+                {
+                    MovePointer(3);
+                }
+            }
+
+            private void JumpIfFalse()
+            {
+                if (State[Param(1)] == 0)
+                {
+                    _pointer = State[Param(2)];
+                }
+                else
+                {
+                    MovePointer(3);
+                }
+            }
 
             private void BuildOperations()
             {
@@ -185,39 +216,7 @@ namespace AdventOfCode2019
                 };
             }
 
-            private void LessThenCheck()
-            {
-                State[Param(3)] = State[Param(1)] < State[Param(2)] ? 1 : 0;
-                MovePointer(4);
-            }
-            private void EqualToCheck()
-            {
-                State[Param(3)] = State[Param(1)] == State[Param(2)] ? 1 : 0;
-                MovePointer(4);
-            }
-
-            private void JumpIfTrue()
-            {
-                if (State[Param(1)] != 0)
-                {
-                    MovePointer(2);
-                }
-                else
-                {
-                    MovePointer(4);
-                }
-            }
-            private void JumpIfFalse()
-            {
-                if (State[Param(1)] == 0)
-                {
-                    MovePointer(2);
-                }
-                else
-                {
-                    MovePointer(4);
-                }
-            }
+        
         }
     }
 }
