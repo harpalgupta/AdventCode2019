@@ -96,9 +96,7 @@ namespace AdventOfCode2019
                     }
                     else
                     {
-                        //TODO Skip if Opcode not valid?
-                        //MovePointer(1);
-                        //throw new Exception($"{opCode} OpCode Not Found");
+                        throw new Exception($"{opCode} OpCode Not Found");
                     }
                 }
             }
