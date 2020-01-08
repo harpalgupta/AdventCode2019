@@ -52,9 +52,9 @@ namespace AdventOfCode2019
             Assert.AreEqual(135, shortestDistance2);
             Assert.AreEqual(806, shortestDistance3);
         }
-
+        //TODO
         [Test]
-        [Ignore("Part2 struggle")]
+        [Ignore("Part2 struggle will come back to this")]
         public void CheckStepsForIntersections()
         {
             var test1 = "R8,U5,L5,D3";
