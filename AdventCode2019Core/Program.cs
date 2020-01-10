@@ -9,8 +9,8 @@ namespace AdventOfCode2019
         public static void Main(string[] args)
         {
             var day1 = new Day1("day1Input.txt");
-            var part1Result = day1.MassCalculateListAndSum();
-            var part2Result = day1.MassCalculateWithFuelListAndSum();
+            var part1Result = day1.FuelCalculateListAndSum();
+            var part2Result = day1.MassCalculateWithFuelWeightListAndSum();
         }
 
 
